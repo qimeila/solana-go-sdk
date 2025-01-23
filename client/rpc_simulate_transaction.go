@@ -15,6 +15,7 @@ type SimulateTransaction struct {
 	Accounts     []*AccountInfo
 	ReturnData   *ReturnData
 	UnitConsumed *uint64
+	InnerInstructions []InnerInstruction
 }
 
 type SimulateTransactionConfig struct {
@@ -22,6 +23,7 @@ type SimulateTransactionConfig struct {
 	Commitment             rpc.Commitment
 	ReplaceRecentBlockhash bool
 	Addresses              []string
+	InnerInstructions      bool
 }
 
 func (c SimulateTransactionConfig) toRpc() rpc.SimulateTransactionConfig {
@@ -38,6 +40,7 @@ func (c SimulateTransactionConfig) toRpc() rpc.SimulateTransactionConfig {
 		Commitment:             c.Commitment,
 		ReplaceRecentBlockhash: c.ReplaceRecentBlockhash,
 		Accounts:               accounts,
+		InnerInstructions:      c.InnerInstructions,
 	}
 }
 
@@ -141,6 +144,7 @@ func convertSimulateTransaction(v rpc.ValueWithContext[rpc.SimulateTransactionVa
 		Accounts:     accountInfos,
 		ReturnData:   returnData,
 		UnitConsumed: v.Value.UnitConsumed,
+		InnerInstructions: v.Value.InnerInstructions
 	}, nil
 }
 

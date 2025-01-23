@@ -15,6 +15,7 @@ type SimulateTransactionValue struct {
 	Accounts     []*AccountInfo `json:"accounts,omitempty"`
 	ReturnData   *ReturnData    `json:"returnData,omitempty"`
 	UnitConsumed *uint64        `json:"unitsConsumed,omitempty"`
+	InnerInstructions []InnerInstruction `json:"innerInstructions,omitempty"`
 }
 
 type SimulateTransactionConfig struct {
@@ -23,6 +24,7 @@ type SimulateTransactionConfig struct {
 	Encoding               SimulateTransactionEncoding        `json:"encoding,omitempty"`               // default: "base58"
 	ReplaceRecentBlockhash bool                               `json:"replaceRecentBlockhash,omitempty"` // default: false, conflicts with sigVerify
 	Accounts               *SimulateTransactionConfigAccounts `json:"accounts,omitempty"`
+	InnerInstructions      bool                               `json:"innerInstructions,omitempty"`
 }
 
 type SimulateTransactionConfigAccounts struct {

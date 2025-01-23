@@ -73,3 +73,17 @@ type Reward struct {
 	RewardType   *RewardType `json:"rewardType"`
 	Commission   *uint8      `json:"commission"`
 }
+
+
+type InnerInstruction struct {
+	Index        uint64
+	Instructions []CompiledInstruction
+}
+
+
+
+type CompiledInstruction struct {
+	ProgramIDIndex int
+	Accounts       []int
+	Data           []byte
+}
