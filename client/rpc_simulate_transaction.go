@@ -138,13 +138,18 @@ func convertSimulateTransaction(v rpc.ValueWithContext[rpc.SimulateTransactionVa
 		returnData = &d
 	}
 
+	innerInstructions, err := convertInnerInstructions(v.Value.InnerInstructions)
+	if err != nil {
+		return SimulateTransaction{}, fmt.Errorf("failed to convert inner instructions: %v", err)
+	}
+
 	return SimulateTransaction{
 		Err:               v.Value.Err,
 		Logs:              v.Value.Logs,
 		Accounts:          accountInfos,
 		ReturnData:        returnData,
 		UnitConsumed:      v.Value.UnitConsumed,
-		InnerInstructions: v.Value.InnerInstructions,
+		InnerInstructions: innerInstructions,
 	}, nil
 }
 
