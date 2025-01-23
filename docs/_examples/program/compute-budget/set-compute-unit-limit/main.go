@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 
-	"github.com/blocto/solana-go-sdk/client"
-	"github.com/blocto/solana-go-sdk/program/compute_budget"
-	"github.com/blocto/solana-go-sdk/program/memo"
-	"github.com/blocto/solana-go-sdk/rpc"
-	"github.com/blocto/solana-go-sdk/types"
+	"github.com/qimeila/solana-go-sdk/client"
+	"github.com/qimeila/solana-go-sdk/program/compute_budget"
+	"github.com/qimeila/solana-go-sdk/program/memo"
+	"github.com/qimeila/solana-go-sdk/rpc"
+	"github.com/qimeila/solana-go-sdk/types"
 )
 
 // FUarP2p5EnxD66vVDL4PWRoWMzA56ZVHG24hpEDFShEz

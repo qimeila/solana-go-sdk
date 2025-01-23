@@ -3,9 +3,9 @@ package secp256k1
 import (
 	"fmt"
 
-	"github.com/blocto/solana-go-sdk/common"
-	"github.com/blocto/solana-go-sdk/pkg/bincode"
-	"github.com/blocto/solana-go-sdk/types"
+	"github.com/qimeila/solana-go-sdk/common"
+	"github.com/qimeila/solana-go-sdk/pkg/bincode"
+	"github.com/qimeila/solana-go-sdk/types"
 )
 
 const (

@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/blocto/solana-go-sdk/client"
-	"github.com/blocto/solana-go-sdk/common"
-	"github.com/blocto/solana-go-sdk/pkg/pointer"
-	"github.com/blocto/solana-go-sdk/program/associated_token_account"
-	"github.com/blocto/solana-go-sdk/program/metaplex/token_metadata"
-	"github.com/blocto/solana-go-sdk/program/system"
-	"github.com/blocto/solana-go-sdk/program/token"
-	"github.com/blocto/solana-go-sdk/rpc"
-	"github.com/blocto/solana-go-sdk/types"
+	"github.com/qimeila/solana-go-sdk/client"
+	"github.com/qimeila/solana-go-sdk/common"
+	"github.com/qimeila/solana-go-sdk/pkg/pointer"
+	"github.com/qimeila/solana-go-sdk/program/associated_token_account"
+	"github.com/qimeila/solana-go-sdk/program/metaplex/token_metadata"
+	"github.com/qimeila/solana-go-sdk/program/system"
+	"github.com/qimeila/solana-go-sdk/program/token"
+	"github.com/qimeila/solana-go-sdk/rpc"
+	"github.com/qimeila/solana-go-sdk/types"
 )
 
 // FUarP2p5EnxD66vVDL4PWRoWMzA56ZVHG24hpEDFShEz

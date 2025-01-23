@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/blocto/solana-go-sdk/common"
-	"github.com/blocto/solana-go-sdk/pkg/pointer"
-	"github.com/blocto/solana-go-sdk/rpc"
-	"github.com/blocto/solana-go-sdk/types"
 	"github.com/mr-tron/base58"
+	"github.com/qimeila/solana-go-sdk/common"
+	"github.com/qimeila/solana-go-sdk/pkg/pointer"
+	"github.com/qimeila/solana-go-sdk/rpc"
+	"github.com/qimeila/solana-go-sdk/types"
 )
 
 type GetTransactionConfig struct {

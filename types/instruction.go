@@ -1,6 +1,6 @@
 package types
 
-import "github.com/blocto/solana-go-sdk/common"
+import "github.com/qimeila/solana-go-sdk/common"
 
 type CompiledInstruction struct {
 	ProgramIDIndex int

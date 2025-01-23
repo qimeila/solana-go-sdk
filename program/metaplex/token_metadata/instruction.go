@@ -1,9 +1,9 @@
 package token_metadata
 
 import (
-	"github.com/blocto/solana-go-sdk/common"
-	"github.com/blocto/solana-go-sdk/types"
 	"github.com/near/borsh-go"
+	"github.com/qimeila/solana-go-sdk/common"
+	"github.com/qimeila/solana-go-sdk/types"
 )
 
 type Instruction uint8

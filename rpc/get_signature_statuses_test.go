@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/blocto/solana-go-sdk/internal/client_test"
-	"github.com/blocto/solana-go-sdk/pkg/pointer"
+	"github.com/qimeila/solana-go-sdk/internal/client_test"
+	"github.com/qimeila/solana-go-sdk/pkg/pointer"
 )
 
 func TestGetSignatureStatuses(t *testing.T) {

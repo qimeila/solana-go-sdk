@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 
-	"github.com/blocto/solana-go-sdk/common"
-	"github.com/blocto/solana-go-sdk/rpc"
+	"github.com/qimeila/solana-go-sdk/common"
+	"github.com/qimeila/solana-go-sdk/rpc"
 )
 
 // GetRecentPrioritizationFees returns a list of prioritization fees from recent blocks.
