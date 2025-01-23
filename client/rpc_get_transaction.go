@@ -209,27 +209,3 @@ func parseBase64Tx(raw any, transactionMeta *TransactionMeta) (types.Transaction
 	return tx, accountKeys, nil
 }
 
-func convertInnerInstructions(innerInstructions []rpc.InnerInstruction) ([]InnerInstruction, error) {
-	if innerInstructions == nil {
-		return nil, nil
-	}
-
-	result := make([]InnerInstruction, len(innerInstructions))
-	for i, instruction := range innerInstructions {
-		instructions := make([]types.CompiledInstruction, len(instruction.Instructions))
-		for j, inner := range instruction.Instructions {
-
-			instructions[j] = types.CompiledInstruction{
-				ProgramIDIndex: int(inner.ProgramIDIndex),
-				Accounts:       inner.Accounts,
-				Data:           inner.Data,
-			}
-		}
-
-		result[i] = InnerInstruction{
-			Index:        instruction.Index,
-			Instructions: instructions,
-		}
-	}
-	return result, nil
-}

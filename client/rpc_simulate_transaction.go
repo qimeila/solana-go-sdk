@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"encoding/json"
 
 	"github.com/qimeila/solana-go-sdk/rpc"
 	"github.com/qimeila/solana-go-sdk/types"
@@ -15,7 +16,23 @@ type SimulateTransaction struct {
 	Accounts          []*AccountInfo
 	ReturnData        *ReturnData
 	UnitConsumed      *uint64
-	InnerInstructions []InnerInstruction
+	InnerInstructions []SimulateTransactionValueInnerInstruction
+}
+
+type SimulateTransactionValueInnerInstruction struct {
+	Index        uint64
+	Instructions []SimulateTransactionValueInstruction
+}
+
+
+
+type SimulateTransactionValueInstruction struct {
+	Parsed      map[string]interface{}
+	Accounts    []string
+	Data        string
+	Program     string
+	ProgramId   string
+	StackHeight int
 }
 
 type SimulateTransactionConfig struct {
@@ -138,7 +155,7 @@ func convertSimulateTransaction(v rpc.ValueWithContext[rpc.SimulateTransactionVa
 		returnData = &d
 	}
 
-	innerInstructions, err := convertInnerInstructions(v.Value.InnerInstructions)
+	innerInstructions, err := convertSimulateTransactionValueInnerInstruction(v.Value.SimulateTransactionValueInnerInstructions)
 	if err != nil {
 		return SimulateTransaction{}, fmt.Errorf("failed to convert inner instructions: %v", err)
 	}
@@ -151,6 +168,46 @@ func convertSimulateTransaction(v rpc.ValueWithContext[rpc.SimulateTransactionVa
 		UnitConsumed:      v.Value.UnitConsumed,
 		InnerInstructions: innerInstructions,
 	}, nil
+}
+
+func convertSimulateTransactionValueInnerInstruction(innerInstructions []rpc.SimulateTransactionValueInnerInstruction) ([]SimulateTransactionValueInnerInstruction, error) {
+	if innerInstructions == nil {
+		return nil, nil
+	}
+
+	result := make([]SimulateTransactionValueInnerInstruction, len(innerInstructions))
+	for i, innerInstruction := range innerInstructions {
+		instructions := make([]SimulateTransactionValueInstruction, len(innerInstruction.Instructions))
+		for j, instruction := range innerInstruction.Instructions {
+
+			if len(instruction.Parsed) > 0 {
+				var parsedData map[string]interface{}
+				err := json.Unmarshal(instruction.Parsed, &parsedData)
+				if err != nil {
+					fmt.Printf("Error parsing 'parsed' field: %v\n", err)
+				}
+				instructions[j] = SimulateTransactionValueInstruction{
+					Parsed:         parsedData,
+					Program:        instruction.Program,
+					ProgramId:      instruction.ProgramId,
+					StackHeight:    instruction.StackHeight,
+				}
+			}else{
+				instructions[j] = SimulateTransactionValueInstruction{
+					Accounts:       instruction.Accounts,
+					Data:           instruction.Data,
+					ProgramId:      instruction.ProgramId,
+					StackHeight:    instruction.StackHeight,
+				}
+			}
+		}
+
+		result[i] = SimulateTransactionValueInnerInstruction{
+			Index:        innerInstruction.Index,
+			Instructions: instructions,
+		}
+	}
+	return result, nil
 }
 
 func convertSimulateTransactionAndContext(v rpc.ValueWithContext[rpc.SimulateTransactionValue]) (rpc.ValueWithContext[SimulateTransaction], error) {

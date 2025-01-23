@@ -15,7 +15,7 @@ type SimulateTransactionValue struct {
 	Accounts     []*AccountInfo `json:"accounts,omitempty"`
 	ReturnData   *ReturnData    `json:"returnData,omitempty"`
 	UnitConsumed *uint64        `json:"unitsConsumed,omitempty"`
-	InnerInstructions []InnerInstruction `json:"innerInstructions,omitempty"`
+	SimulateTransactionValueInnerInstructions []SimulateTransactionValueInnerInstruction `json:"innerInstructions,omitempty"`
 }
 
 type SimulateTransactionConfig struct {

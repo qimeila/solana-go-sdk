@@ -1,5 +1,10 @@
 package rpc
 
+
+import (
+	"encoding/json"
+)
+
 // Commitment describes how finalized a block is at that point in time
 type Commitment string
 
@@ -75,15 +80,20 @@ type Reward struct {
 }
 
 
-type InnerInstruction struct {
-	Index        uint64
-	Instructions []CompiledInstruction
+type SimulateTransactionValueInnerInstruction struct {
+	Index        uint64       `json:"index"`
+	Instructions []SimulateTransactionValueInstruction        `json:"instructions"`
 }
 
 
 
-type CompiledInstruction struct {
-	ProgramIDIndex int
-	Accounts       []int
-	Data           []byte
+type SimulateTransactionValueInstruction struct {
+	Parsed      json.RawMessage  `json:"parsed,omitempty"` // 用于存储动态 JSON 数据
+	Accounts    []string         `json:"accounts,omitempty"`
+	Data        string           `json:"data,omitempty"`
+	Program     string           `json:"program"`
+	ProgramId   string           `json:"programId"`
+	StackHeight int              `json:"stackHeight"`
 }
+
+
