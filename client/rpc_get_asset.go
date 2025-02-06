@@ -7,23 +7,20 @@ import (
 )
 
 type Asset struct {
-	Interface     string
-	Id            string
-	Content       *AssetContent
-	Authorities   []AssetAuthority
-	Compression   *AssetCompression
-	Grouping      []AssetGrouping
-	Royalty       *AssetRoyalty
-	Creators      []AssetCreator
-	Ownership     AssetOwnership
-	Uses          *AssetUses
-	Supply        *int64
-	Mutable       bool
-	Burnt         bool
-	Lamports      *uint64
-	Executable    *bool
-	RentEpoch     *uint64
-	MetadataOwner *string
+	Interface   string
+	Id          string
+	Content     *AssetContent
+	Authorities []AssetAuthority
+	Compression *AssetCompression
+	Grouping    []AssetGrouping
+	Royalty     *AssetRoyalty
+	Creators    []AssetCreator
+	Ownership   AssetOwnership
+	Uses        *AssetUses
+	Supply      *AssetSupply
+	Mutable     bool
+	Burnt       bool
+	TokenInfo   *AssetTokenInfo
 }
 
 type AssetContent struct {
@@ -35,51 +32,62 @@ type AssetContent struct {
 }
 
 type AssetFile struct {
-	Uri  string
-	Mime string
+	Uri      string
+	Mime     string
+	Quality  *AssetQuality
+	Contexts []string
+}
+
+type AssetQuality struct {
+	// Add quality fields as needed
 }
 
 type AssetMetadata struct {
-	Description   string
 	Name          string
+	Description   string
 	Symbol        string
 	TokenStandard string
+	Attributes    []AssetAttribute
+}
+
+type AssetAttribute struct {
+	Value     interface{} // can be integer or string
+	TraitType string
 }
 
 type AssetLinks struct {
-	Image       string
 	ExternalUrl string
+	Image       string
 }
 
 type AssetAuthority struct {
 	Address string
-	Scopes  []string
+	Scopes  []string // "full", "royalty", "metadata", "extension"
 }
 
 type AssetCompression struct {
-	Eligible    bool
-	Compressed  bool
-	DataHash    string
-	CreatorHash string
 	AssetHash   string
-	Tree        string
-	Seq         int64
+	Compressed  bool
+	CreatorHash string
+	DataHash    string
+	Eligible    bool
 	LeafId      int64
+	Seq         int64
+	Tree        string
 }
 
 type AssetGrouping struct {
-	GroupKey   string
+	GroupKey   string // e.g., "collection"
 	GroupValue string
-	Verified   *bool
 }
 
 type AssetRoyalty struct {
-	RoyaltyModel        string
-	Target              *string
-	Percent             float64
 	BasisPoints         int
-	PrimarySaleHappened bool
 	Locked              bool
+	Percent             float64
+	PrimarySaleHappened bool
+	RoyaltyModel        string // "creators", "fanout", "single"
+	Target              string
 }
 
 type AssetCreator struct {
@@ -89,17 +97,32 @@ type AssetCreator struct {
 }
 
 type AssetOwnership struct {
-	Frozen         bool
+	Delegate       string
 	Delegated      bool
-	Delegate       *string
-	OwnershipModel string
+	Frozen         bool
 	Owner          string
+	OwnershipModel string // "single", "token"
 }
 
 type AssetUses struct {
-	UseMethod string
 	Remaining int64
 	Total     int64
+	UseMethod string // "burn", "multiple", "single"
+}
+
+type AssetSupply struct {
+	EditionNonce       *int64
+	PrintCurrentSupply *int64
+	PrintMaxSupply     *int64
+}
+
+type AssetTokenInfo struct {
+	Supply          int64
+	Decimals        int
+	TokenProgram    string
+	MintAuthority   string
+	FreezeAuthority string
+	MintExtensions  map[string]interface{}
 }
 
 func (c *Client) GetAsset(ctx context.Context, assetId string) (*Asset, error) {
@@ -117,23 +140,20 @@ func convertAsset(v rpc.Asset) (*Asset, error) {
 	}
 
 	return &Asset{
-		Interface:     v.Interface,
-		Id:            v.Id,
-		Content:       convertAssetContent(v.Content),
-		Authorities:   convertAssetAuthorities(v.Authorities),
-		Compression:   convertAssetCompression(v.Compression),
-		Grouping:      convertAssetGrouping(v.Grouping),
-		Royalty:       convertAssetRoyalty(v.Royalty),
-		Creators:      convertAssetCreators(v.Creators),
-		Ownership:     convertAssetOwnership(v.Ownership),
-		Uses:          convertAssetUses(v.Uses),
-		Supply:        v.Supply,
-		Mutable:       v.Mutable,
-		Burnt:         v.Burnt,
-		Lamports:      v.Lamports,
-		Executable:    v.Executable,
-		RentEpoch:     v.RentEpoch,
-		MetadataOwner: v.MetadataOwner,
+		Interface:   v.Interface,
+		Id:          v.Id,
+		Content:     convertAssetContent(v.Content),
+		Authorities: convertAssetAuthorities(v.Authorities),
+		Compression: convertAssetCompression(v.Compression),
+		Grouping:    convertAssetGrouping(v.Grouping),
+		Royalty:     convertAssetRoyalty(v.Royalty),
+		Creators:    convertAssetCreators(v.Creators),
+		Ownership:   convertAssetOwnership(v.Ownership),
+		Uses:        convertAssetUses(v.Uses),
+		Supply:      convertAssetSupply(v.Supply),
+		Mutable:     v.Mutable,
+		Burnt:       v.Burnt,
+		TokenInfo:   convertAssetTokenInfo(v.TokenInfo),
 	}, nil
 }
 
@@ -157,8 +177,10 @@ func convertAssetFiles(v []rpc.AssetFile) []AssetFile {
 	files := make([]AssetFile, len(v))
 	for i, file := range v {
 		files[i] = AssetFile{
-			Uri:  file.Uri,
-			Mime: file.Mime,
+			Uri:      file.Uri,
+			Mime:     file.Mime,
+			Quality:  convertAssetQuality(file.Quality),
+			Contexts: file.Contexts,
 		}
 	}
 	return files
@@ -166,10 +188,11 @@ func convertAssetFiles(v []rpc.AssetFile) []AssetFile {
 
 func convertAssetMetadata(v rpc.AssetMetadata) AssetMetadata {
 	return AssetMetadata{
-		Description:   v.Description,
 		Name:          v.Name,
+		Description:   v.Description,
 		Symbol:        v.Symbol,
 		TokenStandard: v.TokenStandard,
+		Attributes:    convertAssetAttributes(v.Attributes),
 	}
 }
 
@@ -178,8 +201,8 @@ func convertAssetLinks(v *rpc.AssetLinks) *AssetLinks {
 		return nil
 	}
 	return &AssetLinks{
-		Image:       v.Image,
 		ExternalUrl: v.ExternalUrl,
+		Image:       v.Image,
 	}
 }
 
@@ -202,14 +225,14 @@ func convertAssetCompression(v *rpc.AssetCompression) *AssetCompression {
 		return nil
 	}
 	return &AssetCompression{
-		Eligible:    v.Eligible,
-		Compressed:  v.Compressed,
-		DataHash:    v.DataHash,
-		CreatorHash: v.CreatorHash,
 		AssetHash:   v.AssetHash,
-		Tree:        v.Tree,
-		Seq:         v.Seq,
+		Compressed:  v.Compressed,
+		CreatorHash: v.CreatorHash,
+		DataHash:    v.DataHash,
+		Eligible:    v.Eligible,
 		LeafId:      v.LeafId,
+		Seq:         v.Seq,
+		Tree:        v.Tree,
 	}
 }
 
@@ -222,7 +245,6 @@ func convertAssetGrouping(v []rpc.AssetGrouping) []AssetGrouping {
 		groupings[i] = AssetGrouping{
 			GroupKey:   group.GroupKey,
 			GroupValue: group.GroupValue,
-			Verified:   group.Verified,
 		}
 	}
 	return groupings
@@ -233,12 +255,12 @@ func convertAssetRoyalty(v *rpc.AssetRoyalty) *AssetRoyalty {
 		return nil
 	}
 	return &AssetRoyalty{
+		BasisPoints:         v.BasisPoints,
+		Locked:              v.Locked,
+		Percent:             v.Percent,
+		PrimarySaleHappened: v.PrimarySaleHappened,
 		RoyaltyModel:        v.RoyaltyModel,
 		Target:              v.Target,
-		Percent:             v.Percent,
-		BasisPoints:         v.BasisPoints,
-		PrimarySaleHappened: v.PrimarySaleHappened,
-		Locked:              v.Locked,
 	}
 }
 
@@ -259,11 +281,11 @@ func convertAssetCreators(v []rpc.AssetCreator) []AssetCreator {
 
 func convertAssetOwnership(v rpc.AssetOwnership) AssetOwnership {
 	return AssetOwnership{
-		Frozen:         v.Frozen,
-		Delegated:      v.Delegated,
 		Delegate:       v.Delegate,
-		OwnershipModel: v.OwnershipModel,
+		Delegated:      v.Delegated,
+		Frozen:         v.Frozen,
 		Owner:          v.Owner,
+		OwnershipModel: v.OwnershipModel,
 	}
 }
 
@@ -272,8 +294,54 @@ func convertAssetUses(v *rpc.AssetUses) *AssetUses {
 		return nil
 	}
 	return &AssetUses{
-		UseMethod: v.UseMethod,
 		Remaining: v.Remaining,
 		Total:     v.Total,
+		UseMethod: v.UseMethod,
 	}
+}
+
+func convertAssetSupply(v *rpc.AssetSupply) *AssetSupply {
+	if v == nil {
+		return nil
+	}
+	return &AssetSupply{
+		EditionNonce:       v.EditionNonce,
+		PrintCurrentSupply: v.PrintCurrentSupply,
+		PrintMaxSupply:     v.PrintMaxSupply,
+	}
+}
+
+func convertAssetTokenInfo(v *rpc.AssetTokenInfo) *AssetTokenInfo {
+	if v == nil {
+		return nil
+	}
+	return &AssetTokenInfo{
+		Supply:          v.Supply,
+		Decimals:        v.Decimals,
+		TokenProgram:    v.TokenProgram,
+		MintAuthority:   v.MintAuthority,
+		FreezeAuthority: v.FreezeAuthority,
+		MintExtensions:  v.MintExtensions,
+	}
+}
+
+func convertAssetAttributes(v []rpc.AssetAttribute) []AssetAttribute {
+	if v == nil {
+		return nil
+	}
+	attributes := make([]AssetAttribute, len(v))
+	for i, attr := range v {
+		attributes[i] = AssetAttribute{
+			Value:     attr.Value,
+			TraitType: attr.TraitType,
+		}
+	}
+	return attributes
+}
+
+func convertAssetQuality(v *rpc.AssetQuality) *AssetQuality {
+	if v == nil {
+		return nil
+	}
+	return &AssetQuality{}
 }
