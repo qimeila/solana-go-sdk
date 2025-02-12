@@ -5,7 +5,7 @@ import (
 	"github.com/qimeila/solana-go-sdk/common"
 )
 
-func getLeafAssetId(tree common.PublicKey, leafIndex uint64) (common.PublicKey, error){
+func GetLeafAssetId(tree common.PublicKey, leafIndex uint64) (common.PublicKey, error){
 		// Convert leafIndex to a byte array in little-endian format
 		leafIndexBytes := make([]byte, 8)
 		for i := uint64(0); i < 8; i++ {

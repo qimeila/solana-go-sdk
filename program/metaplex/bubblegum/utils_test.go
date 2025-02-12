@@ -11,7 +11,7 @@ func TestGetEditionMark(t *testing.T) {
 	leafIndex := uint64(805306)
 	expectedOutput := common.PublicKeyFromString("3RDSyGbEbENEZAnNsgGqNzxJgsLXQf5GdNkgqhJU4193")
 
-	assetId, err := getLeafAssetId(tree, leafIndex)
+	assetId, err := GetLeafAssetId(tree, leafIndex)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
